@@ -23,13 +23,15 @@ type Client struct {
 }
 
 // NewClient authenticates and returns a Client API client
-func NewClient(email, password string) (Client, error) {
+func NewClient(email, password string, options ...func(*Client)) (Client, error) {
 	sc := Client{}
 	err := sc.authenticate(email, password)
 	if err != nil {
 		return Client{}, err
 	}
-
+	for _, option := range options {
+		option(&sc)
+	}
 	return sc, nil
 }
 
@@ -2084,7 +2086,6 @@ func (sc *Client) ReplaceSiteListByID(corpName, siteName string, id string, body
 	}
 	return getResponseListBody(resp)
 }
-
 
 // DeleteSiteListByID deletes a rule and returns an error
 func (sc *Client) DeleteSiteListByID(corpName, siteName string, id string) error {
