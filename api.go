@@ -17,8 +17,9 @@ const apiURL = "https://dashboard.signalsciences.net/api"
 
 // Client is the API client
 type Client struct {
-	email string
-	token string
+	email   string
+	token   string
+	timeout time.Duration
 }
 
 // NewClient authenticates and returns a Client API client
@@ -33,11 +34,15 @@ func NewClient(email, password string) (Client, error) {
 }
 
 // NewTokenClient creates a Client using token authentication
-func NewTokenClient(email, token string) Client {
-	return Client{
+func NewTokenClient(email, token string, options ...func(*Client)) Client {
+	client := Client{
 		email: email,
 		token: token,
 	}
+	for _, option := range options {
+		option(&client)
+	}
+	return client
 }
 
 // authenticate takes email/password and authenticates, attaching the
@@ -65,7 +70,9 @@ func (sc *Client) authenticate(email, password string) error {
 }
 
 func (sc *Client) doRequest(method, url, reqBody string) ([]byte, error) {
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: sc.timeout,
+	}
 
 	var b io.Reader
 	if reqBody != "" {
