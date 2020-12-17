@@ -67,6 +67,33 @@ func TestGoUserTokenClient(t *testing.T) {
 		})
 	}
 }
+func TestGoUserTokenClientWithTimeout(t *testing.T) {
+	testCase := Client{
+		email: testcreds.email,
+		token: testcreds.token,
+	}
+	timeoutFunc := func(ssclient *Client) {
+		ssclient.timeout = time.Duration(10) * time.Second
+	}
+	t.Run("test token client with timeout option", func(t *testing.T) {
+		sc := NewTokenClient(testCase.email, testCase.token, timeoutFunc)
+		if sc.timeout.Seconds() != 10 {
+			t.Errorf("Client time got %.0f expected %d", sc.timeout.Seconds(), 10)
+		}
+	})
+}
+func TestGoUserTokenClientWithoutTimeout(t *testing.T) {
+	testCase := Client{
+		email: testcreds.email,
+		token: testcreds.token,
+	}
+	t.Run("test token client with timeout option", func(t *testing.T) {
+		sc := NewTokenClient(testCase.email, testCase.token)
+		if sc.timeout.Seconds() != 0 {
+			t.Errorf("Client time got %.0f expected %d", sc.timeout.Seconds(), 0)
+		}
+	})
+}
 func TestCreateUpdateDeleteSite(t *testing.T) {
 	sc := NewTokenClient(testcreds.email, testcreds.token)
 	corp := testcreds.corp
