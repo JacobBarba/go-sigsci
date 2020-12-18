@@ -47,6 +47,11 @@ func NewTokenClient(email, token string, options ...func(*Client)) Client {
 	return client
 }
 
+// SetTimeout is a setter function for timeout
+func (sc *Client) SetTimeout(timeout time.Duration) {
+	sc.timeout = timeout
+}
+
 // authenticate takes email/password and authenticates, attaching the
 // returned token to the API client.
 func (sc *Client) authenticate(email, password string) error {
