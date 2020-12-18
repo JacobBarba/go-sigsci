@@ -73,7 +73,7 @@ func TestGoUserTokenClientWithTimeout(t *testing.T) {
 		token: testcreds.token,
 	}
 	timeoutFunc := func(ssclient *Client) {
-		ssclient.timeout = time.Duration(10) * time.Second
+		ssclient.SetTimeout(time.Duration(10) * time.Second)
 	}
 	t.Run("test token client with timeout option", func(t *testing.T) {
 		sc := NewTokenClient(testCase.email, testCase.token, timeoutFunc)
